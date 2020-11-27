@@ -1,0 +1,120 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Stocks-BR
+  description: 'Get stocks Price'
+  contact:
+    name: tbaldo Systems
+    email: tiago.b.baldo@gmail.com
+host: localhost:8080
+basePath: /financial/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /stock:
+    get:
+      tags:
+        - "Stocks"
+      summary: get a price
+      description: Get a price from a list stocks
+      operationId: stocks
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: stocks
+          description: A list of stocks
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Stocks"
+      responses:
+        '200':
+          description: Price of Stock
+          schema:
+            $ref: '#/definitions/DetailStock'
+        '401':
+          description: Authorization Failed
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+  /stock/{ticker}:
+    get:
+      tags:
+        - "Stocks"
+      summary: get a price
+      description: Get a price from a list stocks
+      operationId: stocksById
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: ticker
+          description: Ticker of stock
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Consult Stock price by ticker
+          schema:
+            $ref: '#/definitions/DetailStock'
+        '401':
+          description: Authorization Failed
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+definitions:
+  Stocks:
+    properties:
+      ticker:
+        type: string
+  ErrorModel:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+  DetailStock:
+    type: object
+    required:
+      - from_cache
+      - results
+    properties:
+      from_cache:
+        type: boolean
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Ticker'
+  Ticker:
+    type: object
+    required:
+      - simbol
+      - price
+      - updated_at
+    properties:
+      simbol:
+        type: string
+      price:
+        type: string
+      updated_at:
+        type: string
